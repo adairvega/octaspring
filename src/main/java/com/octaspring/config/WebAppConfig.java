@@ -1,5 +1,7 @@
 package com.octaspring.config;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -8,10 +10,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
+
+import com.octaspring.dao.LangInterface;
+import com.octaspring.service.LangService;
 
 @EnableWebMvc
 @Configuration
@@ -59,4 +65,18 @@ public class WebAppConfig implements ApplicationContextAware{
       return viewResolver;
    }
    
+   @Bean
+   public DataSource getDataSource() {
+      DriverManagerDataSource dataSource = new DriverManagerDataSource();
+      dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+      dataSource.setUrl("jdbc:mysql://localhost:3306/tienda_en_linea?serverTimezone=UTC");
+      dataSource.setUsername("root");
+      dataSource.setPassword(null);
+      return dataSource;
+   }
+   
+   @Bean
+   public LangInterface getLang() {
+      return new LangService(this.getDataSource());
+   }
 }
